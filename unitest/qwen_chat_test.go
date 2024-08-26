@@ -18,11 +18,11 @@ func TestQWenNormalChat(t *testing.T) {
 		"max_tokens":  1500,
 	}
 
-	config := easyllm.DefaultConfig("your-token", easyai.TypeQWen)
-	client := easyllm.NewClient(config).SetGlobalParams(globalParams)
+	config := easyllm.DefaultConfig("your-token", easyai.ChatTypeQWen)
+	client := easyllm.NewChatClient(config).SetGlobalParams(globalParams)
 	resp, reply, err := client.NormalChat(context.Background(), &easyai.ChatRequest{
-		Model:   easyai.QWenTurboModel,
-		Message: "",
+		Model:   easyai.ChatModelQWenTurbo,
+		Message: "介绍一下自己",
 	})
 	if err != nil {
 		t.Log(err)
@@ -39,11 +39,11 @@ func TestQWenStreamChat(t *testing.T) {
 	tipsMsg := &easyai.ChatMessage{Role: easyai.IdSystem, Content: "You are a helpful assistant,你的名字是xx,由XX自主研发的AI助手"}
 	globalParams.Input.Messages = append(globalParams.Input.Messages, tipsMsg)
 
-	config := easyllm.DefaultConfig("your-token", easyai.TypeQWen)
-	client := easyllm.NewClient(config)
+	config := easyllm.DefaultConfig("your-token", easyai.ChatTypeQWen)
+	client := easyllm.NewChatClient(config)
 	client.SetCustomParams(globalParams)
 	resp, err := client.StreamChat(context.Background(), &easyai.ChatRequest{
-		Model:   easyai.QWenTurboModel,
+		Model:   easyai.ChatModelQWenTurbo,
 		Message: "介绍一下你自己",
 	})
 	if err != nil {

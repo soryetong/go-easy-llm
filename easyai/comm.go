@@ -13,7 +13,7 @@ const (
 type LLMType string
 
 const (
-	TypeQWen LLMType = "qwen"
+	ChatTypeQWen LLMType = "qwen"
 )
 
 type ClientConfig struct {

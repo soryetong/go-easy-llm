@@ -7,34 +7,34 @@ import (
 	"os"
 )
 
-type Client struct {
+type ChatClient struct {
 	*easyai.ClientConfig
-	LLMInterface
+	LLMChatInterface
 }
 
-type LLMInterface interface {
+type LLMChatInterface interface {
 	SetCustomParams(params interface{})
 
 	NormalChat(ctx context.Context, request *easyai.ChatRequest) (*easyai.ChatResponse, interface{}, error)
 	StreamChat(ctx context.Context, request *easyai.ChatRequest) (<-chan *easyai.ChatResponse, error)
 }
 
-func NewClient(config *easyai.ClientConfig) *Client {
-	return &Client{
+func NewChatClient(config *easyai.ClientConfig) *ChatClient {
+	return &ChatClient{
 		config,
 		getLLM(config),
 	}
 }
 
-func (c *Client) SetGlobalParams(params interface{}) *Client {
+func (c *ChatClient) SetGlobalParams(params interface{}) *ChatClient {
 	c.SetCustomParams(params)
 
 	return c
 }
 
-func getLLM(cfg *easyai.ClientConfig) LLMInterface {
+func getLLM(cfg *easyai.ClientConfig) LLMChatInterface {
 	switch cfg.Types {
-	case easyai.TypeQWen:
+	case easyai.ChatTypeQWen:
 		return &easyai.QWenChat{Config: cfg}
 	default:
 		_, _ = fmt.Fprintf(os.Stderr, "\n\n [go-easy-llm] \n"+

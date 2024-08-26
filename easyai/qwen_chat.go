@@ -13,7 +13,7 @@ import (
 )
 
 const (
-	QWenTurboModel = "qwen-turbo"
+	ChatModelQWenTurbo = "qwen-turbo"
 
 	QWenBaseUrl = "https://dashscope.aliyuncs.com/api/v1/services/aigc/text-generation/generation"
 )
@@ -196,7 +196,7 @@ func (self *QWenChat) cloneParams() {
 func (self *QWenChat) setParamsModel() {
 	defaultModel := self.request.Model
 	if self.request.Model == "" {
-		defaultModel = QWenTurboModel
+		defaultModel = ChatModelQWenTurbo
 	}
 
 	if self.paramsClone.Model == "" {

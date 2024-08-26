@@ -15,7 +15,7 @@
 1. 支持目前市面多家第三方大模型
 2. 一套写法兼容所有平台
 3. 简单配置即可灵活使用第三方 
-4. 更多等你去发现与改进...
+4. 更多等你改进...
 
 ## 已支持的第三方
 
@@ -49,13 +49,13 @@ config := easyllm.DefaultConfigWithProxy("your-token", easyai.TypeQWen, "your-pr
 ```
 
 
-2. 创建客户端
+2. 创建 `Chat` 客户端
 ```go
-client := easyllm.NewClient(config)
+client := easyllm.NewChatClient(config)
 ```
 > 创建客户端可以自定义全局配置
 ```go
-client := easyllm.NewClient(config).SetGlobalParams(globalParams)
+client := easyllm.NewChatClient(config).SetGlobalParams(globalParams)
 
 // 或
 client.SetCustomParams(globalParams)
@@ -63,7 +63,7 @@ client.SetCustomParams(globalParams)
 // 两个方法的最终效果都是一样的,设置一个全局的参数
 ```
 
-3. 调用大模型
+3. 调用 `Chat` 模式大模型
 > 一次性回复 `NormalChat`
 ```go
 resp, reply, err := client.NormalChat(context.Background(), &easyai.ChatRequest{
@@ -88,3 +88,8 @@ for content := range resp {
 
 ## 说明
 1. `ChatRequest.Tips`：提示词，用于引导模型生成更符合要求的答案。
+2. 目前只支持 `chat` 模式，绘画等功能将在后续完善
+
+
+## 示例
+1. 在unitest目录下有示例代码
