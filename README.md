@@ -38,14 +38,14 @@ go get github.com/soryetong/go-easy-llm
 
 1. 添加你自己的配置
 ```go
-config := easyllm.DefaultConfig("your-token", easyai.TypeQWen)
+config := easyllm.DefaultConfig("your-token", easyai.ChatTypeQWen)
 
 // 第一个参数是你的token, 第二个参数是你的大模型类型
-// 可用的大模型, 通过easyai.Type*** 获取
+// 可用的大模型, 通过easyai.ChatType*** 获取
 ```
 > 如果需要代理请求
 ```go
-config := easyllm.DefaultConfigWithProxy("your-token", easyai.TypeQWen, "your-proxy-url")
+config := easyllm.DefaultConfigWithProxy("your-token", easyai.ChatTypeQWen, "your-proxy-url")
 ```
 
 
@@ -67,7 +67,7 @@ client.SetCustomParams(globalParams)
 > 一次性回复 `NormalChat`
 ```go
 resp, reply, err := client.NormalChat(context.Background(), &easyai.ChatRequest{
-    Model:   easyai.QWenTurboModel,
+    Model:   easyai.ChatModelQWenTurbo,
     Message: "请介绍一下自己",
 })
 // resp 为定义的通用类型, `easyai.ChatResponse`
@@ -77,7 +77,7 @@ resp, reply, err := client.NormalChat(context.Background(), &easyai.ChatRequest{
 > 流式回复 `StreamChat`
 ```go
 resp, err := client.StreamChat(context.Background(), &easyai.ChatRequest{
-    Model:   easyai.QWenTurboModel,
+    Model:   easyai.ChatModelQWenTurbo,
     Message: "介绍一下你自己",
 })
 

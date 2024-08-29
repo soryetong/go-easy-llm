@@ -4,6 +4,7 @@ import (
 	"context"
 	easyllm "github.com/soryetong/go-easy-llm"
 	"github.com/soryetong/go-easy-llm/easyai"
+	"github.com/soryetong/go-easy-llm/service"
 	"testing"
 )
 
@@ -51,7 +52,12 @@ func TestQWenStreamChat(t *testing.T) {
 		return
 	}
 
+	markdownFilterSrv := new(service.MarkdownProcessor)
 	for content := range resp {
 		t.Log("content: ", content)
+
+		if markdownFilterSrv.Do(content.Content) != "" {
+			t.Log("content.Content", content.Content)
+		}
 	}
 }
