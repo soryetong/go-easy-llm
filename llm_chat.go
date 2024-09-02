@@ -36,6 +36,14 @@ func getLLM(cfg *easyai.ClientConfig) LLMChatInterface {
 	switch cfg.Types {
 	case easyai.ChatTypeQWen:
 		return &easyai.QWenChat{Config: cfg}
+	case easyai.ChatTypeHunYuan:
+		if cfg.SecretId == "" || cfg.SecretKey == "" {
+			_, _ = fmt.Fprintf(os.Stderr, "\n\n [go-easy-llm] \n"+
+				"  获取Client异常: 请配置SecretId和SecretKey,{ %s } \n\n", cfg.Types)
+
+			os.Exit(-1)
+		}
+		return &easyai.HunYuanChat{Config: cfg}
 	default:
 		_, _ = fmt.Fprintf(os.Stderr, "\n\n [go-easy-llm] \n"+
 			"  获取Client异常: 无效的LLM配置,{ %s } \n\n", cfg.Types)

@@ -90,6 +90,7 @@ func (self *QWenChat) NormalChat(ctx context.Context, request *ChatRequest) (*Ch
 	}
 
 	respBody, err := self.doHttpRequest()
+	defer respBody.Close()
 	if err != nil {
 		errMsg := fmt.Errorf("调用通义千问API失败: { %w }", err)
 		_, _ = fmt.Fprintf(os.Stderr, "\n\n [go-easy-llm] \n  %v \n\n", errMsg)
@@ -97,7 +98,6 @@ func (self *QWenChat) NormalChat(ctx context.Context, request *ChatRequest) (*Ch
 		return nil, nil, errMsg
 	}
 
-	defer respBody.Close()
 	respByte, err := io.ReadAll(respBody)
 	if err != nil {
 		errMsg := fmt.Errorf("调用通义千问API-解析响应数据失败: { %w }", err)
@@ -116,8 +116,8 @@ func (self *QWenChat) NormalChat(ctx context.Context, request *ChatRequest) (*Ch
 
 	respMsg := new(ChatResponse)
 	if len(output.Output.Choices) > 0 {
-		respMsg.Content = output.Output.Choices[0].Message.Content
 		respMsg.Role = output.Output.Choices[0].Message.Role
+		respMsg.Content = output.Output.Choices[0].Message.Content
 	}
 
 	return respMsg, output, nil

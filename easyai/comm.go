@@ -13,13 +13,16 @@ const (
 type LLMType string
 
 const (
-	ChatTypeQWen LLMType = "qwen"
+	ChatTypeQWen    LLMType = "qwen"
+	ChatTypeHunYuan LLMType = "hunyuan"
 )
 
 type ClientConfig struct {
-	Types   LLMType
-	Token   string
-	baseURL string
+	Types     LLMType
+	Token     string
+	SecretId  string
+	SecretKey string
+	baseURL   string
 
 	HttpClient *http.Client
 }
@@ -35,6 +38,11 @@ type ChatRequest struct {
 type ChatMessage struct {
 	Role    RoleType `json:"role"`
 	Content string   `json:"content"`
+}
+
+type ChatMessageUpper struct {
+	Role    RoleType `json:"Role"`
+	Content string   `json:"Content"`
 }
 
 type ChatHistory struct {

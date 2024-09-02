@@ -1,6 +1,6 @@
 <h1 align="center">go-easy-llm</h1>
 
-<p align="center"> 又一个满足你的调用多种大模型API的轮子</p>
+<p align="center"> 一个满足你的调用多种大模型API的轮子</p>
 
 <p align="center">
 
@@ -19,9 +19,16 @@
 
 ## 已支持的第三方
 
-- [阿里云 通义千问](https://help.aliyun.com/zh/model-studio/developer-reference/tongyi-qianwen)
+- [阿里 通义千问](https://help.aliyun.com/zh/model-studio/developer-reference/tongyi-qianwen)
     
     - 自定义配置 `globalParams := new(easyai.QWenParameters)` 按需设置参数
+
+
+- [腾讯 混元](https://cloud.tencent.com/document/api/1729/105701)
+
+  - 自定义配置 `globalParams := new(easyai.HunYuanParameters)` 按需设置参数
+  - 腾讯官方建议使用默认参数, 所以可不设置该参数
+  - 腾讯使用`secretId`、`secretKey`进行鉴权, 所以需要使用`DefaultConfigWithSecret()`添加配置
 
 
 ## 当前go版本
@@ -48,6 +55,10 @@ config := easyllm.DefaultConfig("your-token", easyai.ChatTypeQWen)
 config := easyllm.DefaultConfigWithProxy("your-token", easyai.ChatTypeQWen, "your-proxy-url")
 ```
 
+> 如果使用secretId、secretKey
+```go
+config := easyllm.DefaultConfigWithSecret("your-secretId", "your-secretKey", easyai.ChatTypeHunYuan)
+```
 
 2. 创建 `Chat` 客户端
 ```go
