@@ -38,7 +38,7 @@ func DefaultConfigWithSecret(secretId, secretKey string, types easyai.LLMType) *
 	}
 }
 
-func DefaultConfigWithSecretAndProxy(secretId, secretKey, proxyUrl string, types easyai.LLMType) *easyai.ClientConfig {
+func DefaultConfigWithSecretAndProxy(secretId, secretKey string, types easyai.LLMType, proxyUrl string) *easyai.ClientConfig {
 	proxy, _ := url.Parse(proxyUrl)
 	httpClient := &http.Client{
 		Transport: &http.Transport{
