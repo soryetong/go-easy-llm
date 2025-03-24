@@ -8,12 +8,13 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/soryetong/go-easy-llm/utils"
 	"io"
 	"net/http"
 	"os"
 	"strings"
 	"time"
+
+	"github.com/soryetong/go-easy-llm/utils"
 )
 
 type HunYuanRegionType string
@@ -127,13 +128,13 @@ func (self *HunYuanChat) NormalChat(ctx context.Context, request *ChatRequest) (
 	}
 
 	respBody, err := self.doHttpRequest()
-	defer respBody.Close()
 	if err != nil {
 		errMsg := fmt.Errorf("调用混元API失败: { %w }", err)
 		_, _ = fmt.Fprintf(os.Stderr, "\n\n [go-easy-llm] \n  %v \n\n", errMsg)
 
 		return nil, nil, errMsg
 	}
+	defer respBody.Close()
 
 	respByte, err := io.ReadAll(respBody)
 	if err != nil {

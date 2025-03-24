@@ -90,13 +90,13 @@ func (self *QWenChat) NormalChat(ctx context.Context, request *ChatRequest) (*Ch
 	}
 
 	respBody, err := self.doHttpRequest()
-	defer respBody.Close()
 	if err != nil {
 		errMsg := fmt.Errorf("调用通义千问API失败: { %w }", err)
 		_, _ = fmt.Fprintf(os.Stderr, "\n\n [go-easy-llm] \n  %v \n\n", errMsg)
 
 		return nil, nil, errMsg
 	}
+	defer respBody.Close()
 
 	respByte, err := io.ReadAll(respBody)
 	if err != nil {
