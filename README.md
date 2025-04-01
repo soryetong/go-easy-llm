@@ -1,13 +1,13 @@
 <h1 align="center">go-easy-llm</h1>
 
-<p align="center"> 一个满足你的调用多种大模型API的轮子</p>
+<p align="center"> 一个满足你调用多种大模型API的轮子</p>
 
 <p align="center">
-
+ 不使用第三方包，直接请求第三方API，无须担心性能问题
 </p>
 
 <p align="center">
-
+  也可以轻松接入自研的大模型，让你更加专注于实际业务开发
 </p>
 
 ## 特点
@@ -19,16 +19,31 @@
 
 ## 已支持的第三方
 
+- [火山引擎 豆包](https://www.volcengine.com/docs/82379/1099522)
+
+  - 自定义配置 `globalParams := new(chatmodule.DouBaoParameters)` 按需设置参数
+
+
+- [百度 千帆](https://cloud.baidu.com/doc/WENXINWORKSHOP/s/Fm2vrveyu)
+
+  - 自定义配置 `globalParams := new(chatmodule.QianFanParameters)` 按需设置参数
+
+
+- [OpenAI ChatGPT](https://platform.openai.com/docs/overview)
+
+  - 自定义配置 `globalParams := new(chatmodule.GPTParameters)` 按需设置参数
+
+
 - [阿里 通义千问](https://help.aliyun.com/zh/model-studio/developer-reference/tongyi-qianwen)
     
-    - 自定义配置 `globalParams := new(easyai.QWenParameters)` 按需设置参数
+  - 自定义配置 `globalParams := new(chatmodule.QWenParameters)` 按需设置参数
 
 
 - [腾讯 混元](https://cloud.tencent.com/document/api/1729/105701)
 
-  - 自定义配置 `globalParams := new(easyai.HunYuanParameters)` 按需设置参数
-  - 腾讯官方建议使用默认参数, 所以可不设置该参数
-  - 腾讯使用`secretId`、`secretKey`进行鉴权, 所以需要使用`DefaultConfigWithSecret()`添加配置
+  - 自定义配置 `globalParams := new(chatmodule.HunYuanParameters)` 按需设置参数
+  - 腾讯官方建议使用默认参数，所以可不设置该参数
+  - 腾讯使用`secretId`、`secretKey`进行鉴权，所以需要使用`DefaultConfigWithSecret()`添加配置
 
 
 ## 当前go版本
@@ -37,8 +52,10 @@
 
 ## 安装
 
+> 由于更多第三方API正在更新中, 所以后续将暂时不更新tag了, 暂时只更新main分支
+
 ```shell
-go get github.com/soryetong/go-easy-llm
+go get -u github.com/soryetong/go-easy-llm@main
 ```
 
 ## 使用
@@ -51,6 +68,8 @@ config := easyllm.DefaultConfig("your-token", easyai.ChatTypeQWen)
 // 可用的大模型, 通过easyai.ChatType*** 获取
 ```
 > 如果需要代理请求
+> 
+> 代理为空时与 `DefaultConfig()` 一样, 目的是本地使用代理, 线上无代理时不必更新代码
 ```go
 config := easyllm.DefaultConfigWithProxy("your-token", easyai.ChatTypeQWen, "your-proxy-url")
 ```
@@ -78,7 +97,7 @@ client.SetCustomParams(globalParams)
 > 一次性回复 `NormalChat`
 ```go
 resp, reply, err := client.NormalChat(context.Background(), &easyai.ChatRequest{
-    Model:   easyai.ChatModelQWenTurbo,
+    Model:   "model",
     Message: "请介绍一下自己",
 })
 // resp 为定义的通用类型, `easyai.ChatResponse`
@@ -88,7 +107,7 @@ resp, reply, err := client.NormalChat(context.Background(), &easyai.ChatRequest{
 > 流式回复 `StreamChat`
 ```go
 resp, err := client.StreamChat(context.Background(), &easyai.ChatRequest{
-    Model:   easyai.ChatModelQWenTurbo,
+    Model:   "model",
     Message: "介绍一下你自己",
 })
 
@@ -98,8 +117,18 @@ for content := range resp {
 ```
 
 ## 说明
-1. `ChatRequest.Tips`：提示词，用于引导模型生成更符合要求的答案。
-2. 目前只支持 `chat` 模式，绘画等功能将在后续完善
+1. `ChatRequest.Tips`：提示词，用于引导模型生成更符合要求的答案
+> 你也可以把这个 Tips 放在 `globalParams` 参数中，全局生效
+
+2. 第一次会话时，`chatmodule.ChatRequest` 会返回一个 `SessionId`，对于同一个会话，下次请求时需要传入这个 `SessionId`
+> 如果同一个会话，下次请求时没有传入这个 `SessionId`，那么将会视为是新的会话，`SessionId` 会被重置
+
+
+3. 当你的服务是流式响应，且业务允许用户主动停止响应时，你可以使用 `client.Stop()` 来终止大模型的输出，终止的参数是上一步返回的 `SessionId`
+> 示例可以在 [豆包测试用例](./unitest/doubao_test.go) 中、[混元测试用例](./unitest/hunyuan_test.go) 中查看
+
+
+4. 目前只支持 `chat` 模式，绘画等功能将在后续完善
 
 
 ## 示例

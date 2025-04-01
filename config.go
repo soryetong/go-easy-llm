@@ -1,36 +1,38 @@
 package easyllm
 
 import (
-	"github.com/soryetong/go-easy-llm/easyai"
 	"net/http"
 	"net/url"
+
+	"github.com/soryetong/go-easy-llm/easyai/chatmodule"
 )
 
-func DefaultConfig(token string, types easyai.LLMType) *easyai.ClientConfig {
-	return &easyai.ClientConfig{
+func DefaultConfig(token string, types chatmodule.LLMType) *chatmodule.ClientConfig {
+	return &chatmodule.ClientConfig{
 		Types:      types,
 		Token:      token,
 		HttpClient: &http.Client{},
 	}
 }
 
-func DefaultConfigWithProxy(token string, types easyai.LLMType, proxyUrl string) *easyai.ClientConfig {
-	proxy, _ := url.Parse(proxyUrl)
-	httpClient := &http.Client{
-		Transport: &http.Transport{
+func DefaultConfigWithProxy(token string, types chatmodule.LLMType, proxyUrl string) *chatmodule.ClientConfig {
+	httpClient := &http.Client{}
+	if proxyUrl != "" {
+		proxy, _ := url.Parse(proxyUrl)
+		httpClient.Transport = &http.Transport{
 			Proxy: http.ProxyURL(proxy),
-		},
+		}
 	}
 
-	return &easyai.ClientConfig{
+	return &chatmodule.ClientConfig{
 		Types:      types,
 		Token:      token,
 		HttpClient: httpClient,
 	}
 }
 
-func DefaultConfigWithSecret(secretId, secretKey string, types easyai.LLMType) *easyai.ClientConfig {
-	return &easyai.ClientConfig{
+func DefaultConfigWithSecret(secretId, secretKey string, types chatmodule.LLMType) *chatmodule.ClientConfig {
+	return &chatmodule.ClientConfig{
 		Types:      types,
 		SecretId:   secretId,
 		SecretKey:  secretKey,
@@ -38,15 +40,16 @@ func DefaultConfigWithSecret(secretId, secretKey string, types easyai.LLMType) *
 	}
 }
 
-func DefaultConfigWithSecretAndProxy(secretId, secretKey string, types easyai.LLMType, proxyUrl string) *easyai.ClientConfig {
-	proxy, _ := url.Parse(proxyUrl)
-	httpClient := &http.Client{
-		Transport: &http.Transport{
+func DefaultConfigWithSecretAndProxy(secretId, secretKey string, types chatmodule.LLMType, proxyUrl string) *chatmodule.ClientConfig {
+	httpClient := &http.Client{}
+	if proxyUrl != "" {
+		proxy, _ := url.Parse(proxyUrl)
+		httpClient.Transport = &http.Transport{
 			Proxy: http.ProxyURL(proxy),
-		},
+		}
 	}
 
-	return &easyai.ClientConfig{
+	return &chatmodule.ClientConfig{
 		Types:      types,
 		SecretId:   secretId,
 		SecretKey:  secretKey,

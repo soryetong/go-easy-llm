@@ -2,24 +2,28 @@ package easyllm
 
 import (
 	"context"
-	"fmt"
-	"github.com/soryetong/go-easy-llm/easyai"
 	"os"
+
+	"github.com/soryetong/go-easy-llm/easyai/chatmodule"
+	"github.com/soryetong/go-easy-llm/utils"
 )
 
 type ChatClient struct {
-	*easyai.ClientConfig
+	*chatmodule.ClientConfig
 	LLMChatInterface
 }
 
 type LLMChatInterface interface {
 	SetCustomParams(params interface{})
 
-	NormalChat(ctx context.Context, request *easyai.ChatRequest) (*easyai.ChatResponse, interface{}, error)
-	StreamChat(ctx context.Context, request *easyai.ChatRequest) (<-chan *easyai.ChatResponse, error)
+	NormalChat(ctx context.Context, request *chatmodule.ChatRequest) (*chatmodule.ChatResponse, error)
+	StreamChat(ctx context.Context, request *chatmodule.ChatRequest) (<-chan *chatmodule.ChatResponse, error)
+	Stop(ctx context.Context, sessionId string)
 }
 
-func NewChatClient(config *easyai.ClientConfig) *ChatClient {
+func NewChatClient(config *chatmodule.ClientConfig) *ChatClient {
+	utils.Logger = utils.NewLogger(os.Stdout, "[go-easy-llm:]")
+
 	return &ChatClient{
 		config,
 		getLLM(config),
@@ -32,23 +36,20 @@ func (c *ChatClient) SetGlobalParams(params interface{}) *ChatClient {
 	return c
 }
 
-func getLLM(cfg *easyai.ClientConfig) LLMChatInterface {
+func getLLM(cfg *chatmodule.ClientConfig) LLMChatInterface {
 	switch cfg.Types {
-	case easyai.ChatTypeQWen:
-		return &easyai.QWenChat{Config: cfg}
-	case easyai.ChatTypeHunYuan:
-		if cfg.SecretId == "" || cfg.SecretKey == "" {
-			_, _ = fmt.Fprintf(os.Stderr, "\n\n [go-easy-llm] \n"+
-				"  获取Client异常: 请配置SecretId和SecretKey,{ %s } \n\n", cfg.Types)
-
-			os.Exit(-1)
-		}
-		return &easyai.HunYuanChat{Config: cfg}
+	case chatmodule.ChatTypeQWen:
+		return chatmodule.NewQWenChat(cfg)
+	case chatmodule.ChatTypeHunYuan:
+		return chatmodule.NewHunYuanChat(cfg)
+	case chatmodule.ChatTypeGPT:
+		return chatmodule.NewGPTChat(cfg)
+	case chatmodule.ChatTypeDouBao:
+		return chatmodule.NewDouBaoChat(cfg)
+	case chatmodule.ChatTypeQianFan:
+		return chatmodule.NewQianFanChat(cfg)
 	default:
-		_, _ = fmt.Fprintf(os.Stderr, "\n\n [go-easy-llm] \n"+
-			"  获取Client异常: 无效的LLM配置,{ %s } \n\n", cfg.Types)
-
-		os.Exit(-1)
+		utils.Logger.Error("获取Client异常: 无效的LLM配置", "nowTypes", cfg.Types)
 	}
 
 	return nil
